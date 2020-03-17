@@ -33,6 +33,16 @@ const Expense = mongoose.model('Expense', {
   }
 })
 
+const Income = mongoose.model('Income', {
+  amount: Number,
+  date: Date,
+  description: String,
+  account: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account'
+  }
+})
+
 // ports
 
 const port = process.env.PORT || 8080
@@ -58,7 +68,11 @@ app.get('/categories', async (_, res) => {
 })
 
 app.get('/expenses', async (_, res) => {
-  res.json(await Expense.find())
+  res.json(await Expense.find().populate('account').populate('category'))
+})
+
+app.get('/incomes', async (_, res) => {
+  res.json(await Income.find().populate('account'))
 })
 
 // saving data
@@ -99,7 +113,7 @@ app.post('/expenses', async (req, res) => {
     const exp = new Expense({ amount: amount, date: date, description: description, category: category, account: account })
     await exp.save()
 
-    await calculation(account, amount)
+    await calculation(account, -amount)
 
     res.status(201).json(exp)
 
@@ -108,6 +122,23 @@ app.post('/expenses', async (req, res) => {
       .status(400)
       .json({ message: 'Could not add expense', errors: err.errors })
   } 
+})
+
+app.post('/incomes', async (req, res) => {
+  try {
+    const { amount, date, description, account } = req.body
+    const exp = new Income({ amount: amount, date: date, description: description, account: account })
+    await exp.save()
+
+    await calculation(account, amount)
+
+    res.status(201).json(exp)
+
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: 'Could not add income', errors: err.errors })
+  }
 })
 
 // recalculate saldo (accounts)
