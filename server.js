@@ -113,6 +113,8 @@ app.post('/expenses', async (req, res) => {
     const exp = new Expense({ amount: amount, date: date, description: description, category: category, account: account })
     await exp.save()
 
+    await exp.populate('account').populate('category').execPopulate()
+
     await calculation(account, -amount)
 
     res.status(201).json(exp)
@@ -129,6 +131,7 @@ app.post('/incomes', async (req, res) => {
     const { amount, date, description, account } = req.body
     const exp = new Income({ amount: amount, date: date, description: description, account: account })
     await exp.save()
+    await exp.populate('account').execPopulate()
 
     await calculation(account, amount)
 
