@@ -133,7 +133,7 @@ app.post('/incomes', async (req, res) => {
     await exp.save()
     await exp.populate('account').execPopulate()
 
-    await calculation(account, amount)
+    await calculation(account, exp.amount)
 
     res.status(201).json(exp)
 
