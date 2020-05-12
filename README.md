@@ -1,11 +1,3 @@
-# Mongo API Project
+# Backend for budgeting app
 
-Simple project using Mongo DB and Mongoose, to seeding a database.
-
-## The problem
-
-... 
-
-## View it live
-
-Live version on Heroku: https://agile-refuge-38314.herokuapp.com/ 
+To run backend you need to install NodeJS and MongoDB. Also you need to use commend npm install, to install all dependencies. 
